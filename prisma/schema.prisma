@@ -1,0 +1,439 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "mongodb"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+// ─────────────────────────────────────────────
+//  Models
+// ─────────────────────────────────────────────
+
+model User {
+  id                String    @id @default(cuid()) @map("_id")
+  email             String    @unique
+  password          String
+  username          String?   @unique
+  firstName         String?
+  lastName          String?
+  avatar            String?
+  role              String    @default("USER")
+  isActive          Boolean   @default(true)
+  emailVerified     DateTime?
+  twoFaEnabled      Boolean   @default(false)
+  twoFaSecret       String?
+  pinEnabled        Boolean   @default(false)
+  pin               String?
+  referralCode      String    @unique
+  referredById      String?
+  balance           Float     @default(0)
+  telegramChatId    String?
+  lastLoginAt       DateTime?
+  lastLoginIp       String?
+  bannedAt              DateTime?
+  bannedReason          String?
+  resetPasswordToken    String?
+  resetPasswordExpires  DateTime?
+  domainId          String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  referredBy        User?             @relation("Referrals", fields: [referredById], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  referrals         User[]            @relation("Referrals")
+  stakes            Stake[]
+  deposits          Deposit[]
+  withdrawals       Withdrawal[]
+  transactions      Transaction[]
+  notifications     Notification[]
+  tickets           Ticket[]
+  ticketMessages    TicketMessage[]
+  chatMessages      ChatMessage[]
+  loginHistory      LoginHistory[]
+  apiKeys           ApiKey[]
+  referralEarnings      ReferralEarning[] @relation("ReferralEarningTo")
+  referralEarningsFrom  ReferralEarning[] @relation("ReferralEarningFrom")
+  savedWallets          SavedWallet[]
+  domain            Domain?           @relation(fields: [domainId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([role])
+  @@index([domainId])
+  @@index([resetPasswordToken])
+}
+
+model Domain {
+  id           String        @id @default(cuid()) @map("_id")
+  domain       String        @unique
+  name         String?
+  logoUrl      String?
+  supportEmail String?
+  isActive     Boolean       @default(true)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  users                User[]
+  stakingPlans          StakingPlan[]
+  depositCurrencies     DepositCurrency[]
+  withdrawalCurrencies  WithdrawalCurrency[]
+
+}
+
+model StakingPlan {
+  id           String   @id @default(cuid()) @map("_id")
+  name         String
+  description  String?
+  minAmount    Float
+  maxAmount    Float?
+  durationDays Int
+  dailyRoi     Float
+  totalRoi     Float
+  currency     String   @default("USD")
+  isActive     Boolean  @default(true)
+  isFeatured   Boolean  @default(false)
+  iconUrl      String?
+  sortOrder    Int      @default(0)
+  domainId     String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  domain       Domain?  @relation(fields: [domainId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  stakes       Stake[]
+
+  @@index([isActive])
+  @@index([domainId])
+}
+
+model Stake {
+  id             String    @id @default(cuid()) @map("_id")
+  userId         String
+  planId         String
+  amount         Float
+  currency       String    @default("USD")
+  dailyRoi       Float
+  totalRoi       Float
+  totalEarned    Float     @default(0)
+  expectedReturn Float
+  status         String    @default("ACTIVE")
+  startDate      DateTime  @default(now())
+  endDate        DateTime
+  lastProcessed  DateTime?
+  nextProcessAt  DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  user           User         @relation(fields: [userId], references: [id])
+  plan           StakingPlan  @relation(fields: [planId], references: [id])
+  payments       StakePayment[]
+
+  @@index([userId])
+  @@index([planId])
+  @@index([status])
+}
+
+model StakePayment {
+  id      String   @id @default(cuid()) @map("_id")
+  stakeId String
+  amount  Float
+  date    DateTime @default(now())
+
+  stake   Stake    @relation(fields: [stakeId], references: [id])
+
+  @@index([stakeId])
+}
+
+model DepositCurrency {
+  id              String   @id @default(cuid()) @map("_id")
+  symbol          String
+  name            String
+  network         String
+  minDeposit      Float
+  isActive        Boolean  @default(true)
+  iconUrl         String?
+  contractAddress String?
+  decimals        Int      @default(18)
+  domainId        String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  domain          Domain?  @relation(fields: [domainId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  deposits        Deposit[]
+
+  @@unique([symbol, domainId])
+  @@index([isActive])
+  @@index([domainId])
+}
+
+model WithdrawalCurrency {
+  id              String   @id @default(cuid()) @map("_id")
+  symbol          String
+  name            String
+  network         String
+  minWithdrawal   Float
+  maxWithdrawal   Float?
+  fee             Float    @default(0)
+  feeType         String   @default("fixed")
+  isActive        Boolean  @default(true)
+  iconUrl         String?
+  contractAddress String?
+  decimals        Int      @default(18)
+  domainId        String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  domain          Domain?  @relation(fields: [domainId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  withdrawals     Withdrawal[]
+
+  @@unique([symbol, domainId])
+  @@index([isActive])
+  @@index([domainId])
+}
+
+model Deposit {
+  id                    String    @id @default(cuid()) @map("_id")
+  userId                String
+  currencyId            String
+  amount                Float
+  amountUsd             Float?
+  address               String
+  txHash                String?
+  status                String    @default("PENDING")
+  confirmations         Int       @default(0)
+  requiredConfirmations Int       @default(3)
+  confirmedAt           DateTime?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  user                  User            @relation(fields: [userId], references: [id])
+  currency              DepositCurrency @relation(fields: [currencyId], references: [id])
+
+  @@index([userId])
+  @@index([status])
+  @@index([address])
+}
+
+model Withdrawal {
+  id            String    @id @default(cuid()) @map("_id")
+  userId        String
+  currencyId    String
+  amount        Float
+  amountUsd     Float?
+  fee           Float     @default(0)
+  netAmount     Float
+  walletAddress String
+  txHash        String?
+  status        String    @default("PENDING")
+  pinVerified   Boolean   @default(false)
+  note          String?
+  reviewedAt    DateTime?
+  reviewedById  String?
+  processedAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  user          User               @relation(fields: [userId], references: [id])
+  currency      WithdrawalCurrency @relation(fields: [currencyId], references: [id])
+
+  @@index([userId])
+  @@index([status])
+}
+
+model Transaction {
+  id          String   @id @default(cuid()) @map("_id")
+  userId      String
+  type        String
+  amount      Float
+  currency    String   @default("USD")
+  status      String   @default("COMPLETED")
+  description String?
+  referenceId String?
+  createdAt   DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([type])
+  @@index([createdAt])
+}
+
+model ReferralEarning {
+  id         String   @id @default(cuid()) @map("_id")
+  userId     String
+  fromUserId String
+  stakeId    String?
+  amount     Float
+  percentage Float
+  type       String   @default("STAKE")
+  createdAt  DateTime @default(now())
+
+  user       User     @relation("ReferralEarningTo", fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  fromUser   User     @relation("ReferralEarningFrom", fields: [fromUserId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([userId])
+  @@index([fromUserId])
+}
+
+model Notification {
+  id        String    @id @default(cuid()) @map("_id")
+  userId    String
+  title     String
+  message   String
+  type      String    @default("SYSTEM")
+  isRead    Boolean   @default(false)
+  readAt    DateTime?
+  link      String?
+  createdAt DateTime  @default(now())
+
+  user      User      @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([isRead])
+}
+
+model Ticket {
+  id        String    @id @default(cuid()) @map("_id")
+  userId    String
+  subject   String
+  category  String    @default("GENERAL")
+  status    String    @default("OPEN")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  user      User            @relation(fields: [userId], references: [id])
+  messages  TicketMessage[]
+
+  @@index([userId])
+  @@index([status])
+}
+
+model TicketMessage {
+  id        String   @id @default(cuid()) @map("_id")
+  ticketId  String
+  userId    String
+  content   String
+  isStaff   Boolean  @default(false)
+  imageUrl  String?
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  ticket    Ticket   @relation(fields: [ticketId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([ticketId])
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid()) @map("_id")
+  userId    String
+  content   String
+  isStaff   Boolean  @default(false)
+  imageUrl  String?
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model LoginHistory {
+  id        String   @id @default(cuid()) @map("_id")
+  userId    String
+  ipAddress String
+  userAgent String?
+  country   String?
+  city      String?
+  isSuccess Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model ApiKey {
+  id          String    @id @default(cuid()) @map("_id")
+  userId      String
+  name        String
+  key         String    @unique
+  permissions String[]
+  isActive    Boolean   @default(true)
+  lastUsedAt  DateTime?
+  expiresAt   DateTime?
+  createdAt   DateTime  @default(now())
+
+  user        User      @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model IpBlocklist {
+  id        String   @id @default(cuid()) @map("_id")
+  ip        String   @unique
+  reason    String?
+  blockedAt DateTime @default(now())
+  blockedBy String?
+}
+
+model SiteSetting {
+  id        String   @id @default(cuid()) @map("_id")
+  key       String   @unique
+  value     String
+  type      String   @default("string")
+  group     String   @default("general")
+  updatedAt DateTime @updatedAt
+
+  @@index([group])
+}
+
+model SystemLog {
+  id        String   @id @default(cuid()) @map("_id")
+  level     String   @default("info")
+  message   String
+  context   String?
+  userId    String?
+  ip        String?
+  createdAt DateTime @default(now())
+
+  @@index([level])
+  @@index([createdAt])
+}
+
+model QuickReply {
+  id        String   @id @default(cuid()) @map("_id")
+  title     String
+  content   String
+  domainId  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([domainId])
+}
+
+model BulkEmail {
+  id          String    @id @default(cuid()) @map("_id")
+  subject     String
+  content     String
+  sentCount   Int       @default(0)
+  status      String    @default("pending")
+  scheduledAt DateTime?
+  sentAt      DateTime?
+  createdAt   DateTime  @default(now())
+}
+
+model SavedWallet {
+  id        String   @id @default(cuid()) @map("_id")
+  userId    String
+  label     String?
+  address   String
+  network   String
+  currency  String?
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([userId])
+}
