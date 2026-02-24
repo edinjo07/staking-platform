@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { PlanCard } from '@/components/shared/PlanCard'
 import { Button } from '@/components/ui/button'
 import { TrendingUp, Search, ChevronDown, ChevronUp, Filter, Lock } from 'lucide-react'
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency, sanitizeUrl } from '@/lib/utils'
 import { cn } from '@/lib/utils'
 
 interface Plan {
@@ -110,7 +110,7 @@ export function PlansClient({ plans, isLoggedIn }: PlansClientProps) {
                     <div className="flex items-center gap-2 mb-3">
                       <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/20 ring-1 ring-primary/30">
                         {plan.iconUrl ? (
-                          <img src={plan.iconUrl} alt={plan.name} className="h-5 w-5 rounded-full" />
+                          <img src={sanitizeUrl(plan.iconUrl)} alt={plan.name} className="h-5 w-5 rounded-full" />
                         ) : (
                           <TrendingUp className="h-4 w-4 text-primary" />
                         )}
@@ -227,7 +227,7 @@ export function PlansClient({ plans, isLoggedIn }: PlansClientProps) {
                       plan.isFeatured ? 'bg-primary/20 ring-1 ring-primary/30' : 'bg-secondary'
                     )}>
                       {plan.iconUrl ? (
-                        <img src={plan.iconUrl} alt={plan.name} className="h-5 w-5 rounded-full" />
+                        <img src={sanitizeUrl(plan.iconUrl)} alt={plan.name} className="h-5 w-5 rounded-full" />
                       ) : (
                         <TrendingUp className="h-4 w-4 text-primary" />
                       )}

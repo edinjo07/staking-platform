@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { sanitizeUrl } from '@/lib/utils'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -134,7 +135,7 @@ export default function AdminDomainsPage() {
                   <td className="px-4 py-3 text-muted-foreground">{d.name || '—'}</td>
                   <td className="px-4 py-3">
                     {d.logoUrl
-                      ? <img src={d.logoUrl} alt="logo" className="h-7 w-7 rounded object-cover border border-border" />
+                      ? <img src={sanitizeUrl(d.logoUrl)} alt="logo" className="h-7 w-7 rounded object-cover border border-border" />
                       : <span className="text-muted-foreground">—</span>}
                   </td>
                   <td className="px-4 py-3 text-muted-foreground text-xs">{d.supportEmail || '—'}</td>

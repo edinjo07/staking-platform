@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { sanitizeUrl } from '@/lib/utils'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -110,7 +111,7 @@ export default function SupportDomainsPage() {
       <div className="flex items-center gap-4 flex-wrap">
         {domain.logoUrl ? (
           <img
-            src={domain.logoUrl}
+            src={sanitizeUrl(domain.logoUrl)}
             alt="logo"
             className="h-12 w-12 rounded-xl object-cover border border-border flex-shrink-0"
           />
@@ -140,7 +141,7 @@ export default function SupportDomainsPage() {
             { icon: <Mail     className="h-3.5 w-3.5" />, label: 'Support Email', value: domain.supportEmail || <em className="text-muted-foreground">Not set</em> },
             { icon: <Image    className="h-3.5 w-3.5" />, label: 'Logo',
               value: domain.logoUrl
-                ? <img src={domain.logoUrl} alt="logo" className="h-8 w-8 rounded object-cover border border-border inline-block" />
+                ? <img src={sanitizeUrl(domain.logoUrl)} alt="logo" className="h-8 w-8 rounded object-cover border border-border inline-block" />
                 : <em className="text-muted-foreground">Not set</em> },
             { icon: <Clock    className="h-3.5 w-3.5" />, label: 'Added',         value: new Date(domain.createdAt).toLocaleDateString() },
           ].map(({ icon, label, value }) => (

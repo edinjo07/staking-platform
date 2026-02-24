@@ -8,6 +8,7 @@ import {
   Globe, UserPlus, Clock, Activity,
 } from 'lucide-react'
 import Link from 'next/link'
+import { sanitizeUrl, sanitizeEmail } from '@/lib/utils'
 
 interface DomainInfo {
   id: string
@@ -127,7 +128,7 @@ export default function SupportDashboardPage() {
       {/* Header with domain identity */}
       <div className="flex items-center gap-3">
         {domain.logoUrl ? (
-          <img src={domain.logoUrl} alt="logo" className="h-10 w-10 rounded-lg object-cover border border-border" />
+          <img src={sanitizeUrl(domain.logoUrl)} alt="logo" className="h-10 w-10 rounded-lg object-cover border border-border" />
         ) : (
           <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
             <Globe className="h-5 w-5 text-primary" />
@@ -141,7 +142,7 @@ export default function SupportDashboardPage() {
           </p>
         </div>
         {domain.supportEmail && (
-          <a href={`mailto:${domain.supportEmail}`} className="ml-auto text-xs text-muted-foreground hover:text-foreground transition-colors">
+          <a href={sanitizeEmail(domain.supportEmail) ? `mailto:${sanitizeEmail(domain.supportEmail)}` : '#'} className="ml-auto text-xs text-muted-foreground hover:text-foreground transition-colors">
             {domain.supportEmail}
           </a>
         )}

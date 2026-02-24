@@ -7,7 +7,7 @@ async function main() {
   console.log('🌱 Seeding database...')
 
   // ─── Admin user ────────────────────────────────────────────────────────────
-  const adminPassword = await bcrypt.hash('Admin@123456', 12)
+  const adminPassword = await bcrypt.hash(process.env.SEED_ADMIN_PASSWORD ?? 'Admin@123456', 12)
   let admin = await db.user.findFirst({ where: { email: 'admin@stakeplatform.com' } })
   if (!admin) {
     admin = await db.user.create({
@@ -27,7 +27,7 @@ async function main() {
   console.log('✅ Admin user:', admin.email)
 
   // ─── Worker user ───────────────────────────────────────────────────────────
-  const workerPassword = await bcrypt.hash('Worker@123456', 12)
+  const workerPassword = await bcrypt.hash(process.env.SEED_WORKER_PASSWORD ?? 'Worker@123456', 12)
   let worker = await db.user.findFirst({ where: { email: 'worker@stakeplatform.com' } })
   if (!worker) {
     worker = await db.user.create({
@@ -47,7 +47,7 @@ async function main() {
   console.log('✅ Worker user:', worker.email)
 
   // ─── Support user ──────────────────────────────────────────────────────────
-  const supportPassword = await bcrypt.hash('Support@123456', 12)
+  const supportPassword = await bcrypt.hash(process.env.SEED_SUPPORT_PASSWORD ?? 'Support@123456', 12)
   let support = await db.user.findFirst({ where: { email: 'support@stakeplatform.com' } })
   if (!support) {
     support = await db.user.create({

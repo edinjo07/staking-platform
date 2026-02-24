@@ -7,6 +7,29 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /**
+ * Sanitize a URL to prevent XSS - only permits http/https and relative paths.
+ * Returns an empty string for any unsafe URL (e.g. javascript:, data:).
+ */
+export function sanitizeUrl(url: string | null | undefined): string {
+  if (!url) return ''
+  const trimmed = url.trim()
+  if (/^https?:\/\//i.test(trimmed) || trimmed.startsWith('/') || trimmed.startsWith('blob:')) {
+    return trimmed
+  }
+  return ''
+}
+
+/**
+ * Sanitize an email address for use in mailto: href attributes.
+ * Returns empty string if the value doesn't look like a valid email.
+ */
+export function sanitizeEmail(email: string | null | undefined): string {
+  if (!email) return ''
+  const trimmed = email.trim()
+  return /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/.test(trimmed) ? trimmed : ''
+}
+
+/**
  * Format currency amount with symbol
  */
 export function formatCurrency(amount: number, currency: string = 'USD'): string {
