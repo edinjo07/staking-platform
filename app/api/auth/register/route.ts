@@ -38,6 +38,19 @@ export async function POST(req: NextRequest) {
 
     const hash = await bcrypt.hash(password, 12)
 
+    // Auto-generate a unique username if not supplied
+    const baseUsername = username
+      || (firstName ? firstName.toLowerCase().replace(/\s+/g, '') + Math.floor(Math.random() * 9000 + 1000) : null)
+      || 'user' + Math.floor(Math.random() * 900000 + 100000)
+    let finalUsername = baseUsername
+    let uAttempts = 0
+    while (uAttempts < 10) {
+      const taken = await prisma.user.findUnique({ where: { username: finalUsername } })
+      if (!taken) break
+      finalUsername = baseUsername + Math.floor(Math.random() * 9000 + 1000)
+      uAttempts++
+    }
+
     // Generate a unique referral code with collision retry
     let myReferralCode = generateReferralCode()
     let attempts = 0
@@ -56,7 +69,7 @@ export async function POST(req: NextRequest) {
           password: hash,
           firstName: firstName ?? null,
           lastName: lastName ?? null,
-          username: username ?? null,
+          username: finalUsername,
           referralCode: myReferralCode,
           referredById,
         },
