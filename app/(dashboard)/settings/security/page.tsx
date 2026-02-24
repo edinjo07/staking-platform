@@ -8,7 +8,8 @@ import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { toast } from 'sonner'
 import { Shield, Smartphone, Key, Clock } from 'lucide-react'
-import { formatDateTime, sanitizeUrl } from '@/lib/utils'
+import { formatDateTime } from '@/lib/utils'
+import { SafeImg } from '@/components/shared/SafeImg'
 
 interface LoginRecord {
   id: string
@@ -284,8 +285,7 @@ export default function SecurityPage() {
               <p className="text-sm text-muted-foreground">
                 Scan this QR code with your authenticator app:
               </p>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={sanitizeUrl(twoFaQr)} alt="2FA QR Code" className="w-40 h-40 rounded-lg border border-border" />
+              <SafeImg src={twoFaQr} alt="2FA QR Code" allowDataImage className="w-40 h-40 rounded-lg border border-border" />
               <p className="text-xs text-muted-foreground">
                 Or enter this secret manually:{' '}
                 <span className="font-mono text-foreground">{twoFaSecret}</span>

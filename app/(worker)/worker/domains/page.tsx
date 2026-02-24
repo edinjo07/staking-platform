@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { sanitizeUrl } from '@/lib/utils'
+import { SafeImg } from '@/components/shared/SafeImg'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -124,7 +124,7 @@ export default function WorkerDomainsPage() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           {data.logoUrl ? (
-            <img src={sanitizeUrl(data.logoUrl)} alt="logo" className="h-10 w-10 rounded-lg object-cover border border-border" />
+            <SafeImg src={data.logoUrl} alt="logo" className="h-10 w-10 rounded-lg object-cover border border-border" />
           ) : (
             <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
               <Globe className="h-5 w-5 text-primary" />
@@ -286,7 +286,7 @@ export default function WorkerDomainsPage() {
                         <Image className="h-3.5 w-3.5" /> Logo
                       </span>
                       {data.logoUrl ? (
-                        <img src={sanitizeUrl(data.logoUrl)} alt="logo" className="h-8 w-8 rounded object-cover border border-border" />
+                        <SafeImg src={data.logoUrl} alt="logo" className="h-8 w-8 rounded object-cover border border-border" />
                       ) : (
                         <span className="text-sm text-muted-foreground italic">Not set</span>
                       )}

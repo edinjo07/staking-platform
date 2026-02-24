@@ -12,7 +12,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { toast } from 'sonner'
 import { Plus, Send, Paperclip, MessageSquare, ChevronRight } from 'lucide-react'
-import { formatDateTime, sanitizeUrl } from '@/lib/utils'
+import { formatDateTime } from '@/lib/utils'
+import { SafeImg } from '@/components/shared/SafeImg'
 
 interface Ticket {
   id: string
@@ -233,8 +234,7 @@ export default function TicketPage() {
                         >
                           {msg.content && <p>{msg.content}</p>}
                           {msg.imageUrl && (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img src={sanitizeUrl(msg.imageUrl)} alt="attachment" className="mt-2 max-w-xs rounded-lg" />
+                            <SafeImg src={msg.imageUrl} alt="attachment" className="mt-2 max-w-xs rounded-lg" />
                           )}
                         </div>
                         <p className="text-xs text-muted-foreground">{formatDateTime(msg.createdAt)}</p>

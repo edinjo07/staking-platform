@@ -10,7 +10,8 @@ import { Separator } from '@/components/ui/separator'
 import { toast } from 'sonner'
 import { Send, MessageSquare, Trash2, UserCircle, X, Zap } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
-import { cn, sanitizeUrl } from '@/lib/utils'
+import { cn } from '@/lib/utils'
+import { SafeImg } from '@/components/shared/SafeImg'
 
 interface QuickReply {
   id: string
@@ -267,7 +268,7 @@ export default function WorkerChatPage() {
                           : 'bg-secondary text-secondary-foreground rounded-bl-none'
                       )}>
                         {m.imageUrl && (
-                          <img src={sanitizeUrl(m.imageUrl)} alt="attachment" className="rounded-lg max-w-full mb-1" />
+                          <SafeImg src={m.imageUrl} alt="attachment" className="rounded-lg max-w-full mb-1" />
                         )}
                         <p>{m.content}</p>
                         <p className="text-[10px] opacity-60 mt-1">
@@ -363,7 +364,7 @@ export default function WorkerChatPage() {
               {/* Avatar */}
               <div className="flex flex-col items-center gap-2 py-2">
                 {selectedUser.avatar ? (
-                  <img src={sanitizeUrl(selectedUser.avatar)} alt="avatar" className="h-16 w-16 rounded-full object-cover" />
+                  <SafeImg src={selectedUser.avatar} alt="avatar" className="h-16 w-16 rounded-full object-cover" />
                 ) : (
                   <div className="h-16 w-16 rounded-full bg-secondary flex items-center justify-center">
                     <UserCircle className="h-10 w-10 text-muted-foreground" />

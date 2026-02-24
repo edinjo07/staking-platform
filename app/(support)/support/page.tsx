@@ -8,7 +8,7 @@ import {
   Globe, UserPlus, Clock, Activity,
 } from 'lucide-react'
 import Link from 'next/link'
-import { sanitizeUrl, sanitizeEmail } from '@/lib/utils'
+import { SafeImg } from '@/components/shared/SafeImg'
 
 interface DomainInfo {
   id: string
@@ -128,7 +128,7 @@ export default function SupportDashboardPage() {
       {/* Header with domain identity */}
       <div className="flex items-center gap-3">
         {domain.logoUrl ? (
-          <img src={sanitizeUrl(domain.logoUrl)} alt="logo" className="h-10 w-10 rounded-lg object-cover border border-border" />
+          <SafeImg src={domain.logoUrl} alt="logo" className="h-10 w-10 rounded-lg object-cover border border-border" />
         ) : (
           <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
             <Globe className="h-5 w-5 text-primary" />
@@ -141,8 +141,8 @@ export default function SupportDashboardPage() {
             <Badge variant={domain.isActive ? 'success' : 'warning'} className="text-xs">{domain.isActive ? 'Active' : 'Inactive'}</Badge>
           </p>
         </div>
-        {domain.supportEmail && (
-          <a href={sanitizeEmail(domain.supportEmail) ? `mailto:${sanitizeEmail(domain.supportEmail)}` : '#'} className="ml-auto text-xs text-muted-foreground hover:text-foreground transition-colors">
+        {domain.supportEmail && /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/.test(domain.supportEmail) && (
+          <a href={`mailto:${encodeURIComponent(domain.supportEmail)}`} className="ml-auto text-xs text-muted-foreground hover:text-foreground transition-colors">
             {domain.supportEmail}
           </a>
         )}

@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { MessageSquare, X, Send, Image, Minimize2 } from 'lucide-react'
-import { formatDateTime, sanitizeUrl } from '@/lib/utils'
+import { formatDateTime } from '@/lib/utils'
+import { SafeImg } from '@/components/shared/SafeImg'
 import { cn } from '@/lib/utils'
 
 interface Message {
@@ -197,11 +198,7 @@ export function ChatWidget() {
                       )}
                     >
                       {msg.imageUrl && (
-                        <img
-                          src={sanitizeUrl(msg.imageUrl)}
-                          alt="attachment"
-                          className="rounded-lg max-w-full mb-2"
-                        />
+                        <SafeImg src={msg.imageUrl} alt="attachment" className="rounded-lg max-w-full mb-2" />
                       )}
                       {msg.content}
                       <p
