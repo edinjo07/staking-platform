@@ -38,29 +38,3 @@ export function SafeImg({ src, alt, allowDataImage, ...props }: SafeImgProps) {
   // eslint-disable-next-line @next/next/no-img-element
   return <img src={safeSrc} alt={alt} {...props} />
 }
-
-
-/**
- * SafeImg only renders an <img> when src is a valid http/https URL.
- * The URL constructor parses and reconstructs the href, breaking any
- * taint chain from user-controlled input (prevents javascript:/data: injection).
- */
-export function SafeImg({ src, alt, ...props }: SafeImgProps) {
-  if (!src) return null
-
-  let safeSrc: string
-  try {
-    const parsed = new URL(src.trim())
-    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return null
-    // parsed.href is a freshly constructed string from URL — not the original input
-    safeSrc = parsed.href
-  } catch {
-    // Allow relative paths (e.g. /images/logo.png)
-    const trimmed = src.trim()
-    if (!trimmed.startsWith('/')) return null
-    safeSrc = encodeURI(trimmed)
-  }
-
-  // eslint-disable-next-line @next/next/no-img-element
-  return <img src={safeSrc} alt={alt} {...props} />
-}
