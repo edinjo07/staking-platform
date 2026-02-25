@@ -2,7 +2,7 @@
 
 import { useState, Suspense } from 'react'
 import Link from 'next/link'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { signIn, getSession } from 'next-auth/react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -20,6 +20,7 @@ import {
   Zap,
   BarChart3,
   ChevronRight,
+  Smartphone,
 } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -57,12 +58,15 @@ const perks = [
 ]
 
 function LoginForm() {
-  const router = useRouter()
   const searchParams = useSearchParams()
   const rawCallback = searchParams.get('callbackUrl') || '/dashboard'
   const callbackUrl = rawCallback.startsWith('/') ? rawCallback : '/dashboard'
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
+  // 2FA state
+  const [twoFaStep, setTwoFaStep]   = useState(false)
+  const [totpCode, setTotpCode]     = useState('')
+  const [totpLoading, setTotpLoading] = useState(false)
 
   const {
     register,
@@ -87,8 +91,14 @@ function LoginForm() {
         toast.error(msg)
         setLoading(false)
       } else {
-        toast.success('Welcome back!')
+        // Check if 2FA is pending
         const session = await getSession()
+        if ((session as any)?.twoFaPending) {
+          setTwoFaStep(true)
+          setLoading(false)
+          return
+        }
+        toast.success('Welcome back!')
         const role = session?.user?.role || 'USER'
         window.location.href = getRoleRedirect(role, callbackUrl)
       }
@@ -98,6 +108,103 @@ function LoginForm() {
     }
   }
 
+  const onTotpSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!totpCode.trim()) return
+    setTotpLoading(true)
+    try {
+      const res  = await fetch('/api/auth/2fa-verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: totpCode.trim() }),
+      })
+      const data = await res.json()
+
+      if (!res.ok) {
+        toast.error(data.error || 'Invalid code')
+        setTotpLoading(false)
+        return
+      }
+
+      // Exchange the signed nonce for the real session
+      const result = await signIn('two-factor', {
+        userId: data.userId,
+        nonce:  data.nonce,
+        redirect: false,
+      })
+
+      if (result?.error) {
+        toast.error('2FA verification failed. Please try again.')
+        setTotpLoading(false)
+        return
+      }
+
+      toast.success('Welcome back!')
+      const session = await getSession()
+      const role = session?.user?.role || 'USER'
+      window.location.href = getRoleRedirect(role, callbackUrl)
+    } catch {
+      toast.error('Something went wrong. Please try again.')
+      setTotpLoading(false)
+    }
+  }
+
+  // ── 2FA challenge screen ─────────────────────────────────────────
+  if (twoFaStep) {
+    return (
+      <div className="w-full space-y-6">
+        <div className="flex flex-col items-center gap-3 text-center">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/15 ring-1 ring-primary/30">
+            <Smartphone className="h-7 w-7 text-primary" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold">Two-Factor Authentication</h1>
+            <p className="text-sm text-muted-foreground mt-1">
+              Enter the 6-digit code from your authenticator app
+            </p>
+          </div>
+        </div>
+
+        <form onSubmit={onTotpSubmit} className="space-y-4">
+          <div className="space-y-1.5">
+            <Label htmlFor="totp">Authentication Code</Label>
+            <Input
+              id="totp"
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9 ]*"
+              maxLength={7}
+              autoFocus
+              autoComplete="one-time-code"
+              placeholder="000 000"
+              className="h-14 text-center text-2xl font-mono tracking-[0.5em] bg-secondary/40 border-border focus:border-primary/60"
+              value={totpCode}
+              onChange={(e) => setTotpCode(e.target.value.replace(/[^0-9]/g, ''))}
+            />
+          </div>
+
+          <Button
+            type="submit"
+            variant="gradient"
+            className="w-full h-11 font-semibold text-base"
+            disabled={totpLoading || totpCode.length < 6}
+          >
+            {totpLoading ? 'Verifying…' : 'Verify & Sign In'}
+          </Button>
+        </form>
+
+        <button
+          type="button"
+          onClick={() => { setTwoFaStep(false); setTotpCode('') }}
+          className="w-full text-center text-sm text-muted-foreground hover:text-foreground transition-colors"
+        >
+          ← Back to sign in
+        </button>
+      </div>
+    )
+  }
+
+  // ── Normal login form ─────────────────────────────────────────────────
   return (
     <div className="w-full space-y-5">
       <div className="space-y-1">

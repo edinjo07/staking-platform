@@ -60,8 +60,10 @@ export default withAuth(
           return true
         }
 
-        // All other routes require authentication
-        return !!token
+        // All other routes require a fully authenticated token.
+        // A twoFaPending token means password was correct but TOTP not yet
+        // verified — treat as unauthenticated for all protected routes.
+        return !!token && !token.twoFaPending
       },
     },
   }

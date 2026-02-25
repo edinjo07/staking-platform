@@ -9,6 +9,8 @@ declare module 'next-auth' {
       role: string
       avatar?: string
     }
+    twoFaPending?: boolean
+    twoFaUserId?: string
   }
 
   interface User {
@@ -17,6 +19,7 @@ declare module 'next-auth' {
     name: string
     role: string
     avatar?: string
+    twoFaPending?: boolean
   }
 }
 
@@ -24,5 +27,7 @@ declare module 'next-auth/jwt' {
   interface JWT {
     role: string
     avatar?: string
+    twoFaPending?: boolean
+    twoFaUserId?: string
   }
 }
