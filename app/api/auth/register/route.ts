@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import bcrypt from 'bcryptjs'
-import { sendWelcomeEmail } from '@/lib/mail'
+import { sendVerificationEmail } from '@/lib/mail'
 import { generateReferralCode } from '@/lib/utils'
 import { z } from 'zod'
+import { randomBytes } from 'crypto'
 
 const schema = z.object({
   email: z.string().email(),
@@ -63,6 +64,9 @@ export async function POST(req: NextRequest) {
 
     let user
     try {
+      const verificationToken   = randomBytes(32).toString('hex')
+      const verificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 h
+
       user = await prisma.user.create({
         data: {
           email: email.toLowerCase(),
@@ -72,8 +76,13 @@ export async function POST(req: NextRequest) {
           username: finalUsername,
           referralCode: myReferralCode,
           referredById,
+          emailVerificationToken: verificationToken,
+          emailVerificationExpires: verificationExpires,
         },
       })
+
+      // Send verification email (non-blocking)
+      sendVerificationEmail(user.email, firstName || user.email, verificationToken).catch(console.error)
     } catch (createError: any) {
       // P2002 = unique constraint violation (race condition on email)
       if (createError?.code === 'P2002') {
@@ -82,10 +91,7 @@ export async function POST(req: NextRequest) {
       throw createError
     }
 
-    // Send welcome email (non-blocking)
-    sendWelcomeEmail(user.email, firstName || user.email).catch(console.error)
-
-    return NextResponse.json({ message: 'Account created.', userId: user.id }, { status: 201 })
+    return NextResponse.json({ message: 'Account created. Please check your email to verify your account.', userId: user.id }, { status: 201 })
   } catch (error) {
     console.error('[REGISTER]', error)
     return NextResponse.json({ error: 'Internal server error.' }, { status: 500 })

@@ -109,6 +109,44 @@ export async function sendWelcomeEmail(email: string, name: string): Promise<voi
   })
 }
 
+export function getVerificationEmailTemplate(name: string, verifyUrl: string): string {
+  return `
+    <!DOCTYPE html>
+    <html>
+    <head><meta charset="utf-8"><title>Verify Your Email</title></head>
+    <body style="font-family: Arial, sans-serif; background: #0f172a; color: #e2e8f0; padding: 20px;">
+      <div style="max-width: 600px; margin: 0 auto; background: #1e293b; border-radius: 12px; padding: 40px;">
+        <h1 style="color: #22c55e; text-align: center;">Verify Your Email</h1>
+        <p>Hello ${name},</p>
+        <p>Thanks for signing up! Please verify your email address to activate your account.</p>
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${verifyUrl}"
+             style="background: #22c55e; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 16px;">
+            Verify Email Address
+          </a>
+        </div>
+        <p>Or copy this link into your browser:</p>
+        <p style="word-break: break-all; color: #94a3b8; font-size: 13px;">${verifyUrl}</p>
+        <p>This link expires in <strong>24 hours</strong>.</p>
+        <p style="color: #94a3b8; font-size: 12px; text-align: center;">
+          If you didn't create this account, you can safely ignore this email.
+        </p>
+      </div>
+    </body>
+    </html>
+  `
+}
+
+export async function sendVerificationEmail(email: string, name: string, token: string): Promise<void> {
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+  const verifyUrl = `${appUrl}/verify-email?token=${token}`
+  await sendEmail({
+    to: email,
+    subject: 'Verify your email address',
+    html: getVerificationEmailTemplate(name, verifyUrl),
+  })
+}
+
 export async function sendPasswordResetEmail(email: string, resetUrl: string, name?: string): Promise<void> {
   await sendEmail({
     to: email,
