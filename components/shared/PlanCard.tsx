@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { formatCurrency } from '@/lib/utils'
 import { TrendingUp, Clock, Flame, Star, Lock } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { SafeImg } from '@/components/shared/SafeImg'
 
 interface PlanCardProps {
   plan: {
@@ -64,7 +65,7 @@ export function PlanCard({ plan, isLoggedIn = false, showActions = true }: PlanC
             plan.isFeatured ? 'bg-primary/20 ring-2 ring-primary/30' : 'bg-secondary'
           )}>
             {plan.iconUrl ? (
-              <img src={plan.iconUrl} alt={plan.name} className="h-7 w-7 rounded-full" />
+              <SafeImg src={plan.iconUrl} alt={plan.name} className="h-7 w-7 rounded-full" />
             ) : (
               <TrendingUp className="h-5 w-5 text-primary" />
             )}

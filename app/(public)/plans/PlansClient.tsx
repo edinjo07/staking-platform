@@ -2,7 +2,6 @@
 
 import { useState, useMemo } from 'react'
 import Link from 'next/link'
-import { PlanCard } from '@/components/shared/PlanCard'
 import { Button } from '@/components/ui/button'
 import { TrendingUp, Search, ChevronDown, ChevronUp, Filter, Lock } from 'lucide-react'
 import { formatCurrency } from '@/lib/utils'
@@ -160,7 +159,7 @@ export function PlansClient({ plans, isLoggedIn }: PlansClientProps) {
               {f.label}
             </button>
           ))}
-          <div className="h-4 border-l border-border self-center mx-1" />
+          <div className="hidden sm:block h-4 border-l border-border self-center mx-1" />
           {YIELD_FILTERS.map((f) => (
             <button
               key={f.value}

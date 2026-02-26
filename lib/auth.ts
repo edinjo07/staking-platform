@@ -47,7 +47,9 @@ export const authOptions: NextAuthOptions = {
           throw new Error('Your account has been suspended')
         }
 
-        if (!user.emailVerified) {
+        // Only enforce email verification for accounts that received a verification token.
+        // Users created before this feature (emailVerificationToken = null) are not affected.
+        if (!user.emailVerified && user.emailVerificationToken !== null) {
           throw new Error('Please verify your email address before signing in. Check your inbox or request a new verification link.')
         }
 
