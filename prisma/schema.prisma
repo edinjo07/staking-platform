@@ -200,10 +200,14 @@ model Deposit {
   amount                Float
   amountUsd             Float?
   address               String
+  paymentId             String?   // NOWPayments payment_id
+  payCurrency           String?   // e.g. "btc"
+  payAmount             Float?    // exact crypto amount user must send
   txHash                String?
   status                String    @default("PENDING")
   confirmations         Int       @default(0)
   requiredConfirmations Int       @default(3)
+  expiresAt             DateTime? // payment expiry (NOWPayments: ~60 min)
   confirmedAt           DateTime?
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt

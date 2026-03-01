@@ -1,6 +1,7 @@
 ﻿import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { PlanCard } from '@/components/shared/PlanCard'
+import CryptoTicker from '@/components/layout/CryptoTicker'
 import { prisma } from '@/lib/db'
 import { getAuthSession } from '@/lib/auth'
 import {
@@ -153,18 +154,7 @@ const cryptoCoins = [
   { symbol: 'link', name: 'Chainlink' },
 ]
 
-const tickerCoins = [
-  { symbol: 'BTC', price: '$97,842', change: '+2.4%', up: true },
-  { symbol: 'ETH', price: '$3,421', change: '+1.8%', up: true },
-  { symbol: 'SOL', price: '$189.5', change: '+5.2%', up: true },
-  { symbol: 'BNB', price: '$612.3', change: '-0.7%', up: false },
-  { symbol: 'ADA', price: '$0.892', change: '+3.1%', up: true },
-  { symbol: 'DOT', price: '$11.24', change: '+2.0%', up: true },
-  { symbol: 'AVAX', price: '$42.80', change: '-1.2%', up: false },
-  { symbol: 'MATIC', price: '$1.23', change: '+4.5%', up: true },
-  { symbol: 'LINK', price: '$18.97', change: '+1.9%', up: true },
-  { symbol: 'TRX', price: '$0.137', change: '+0.8%', up: true },
-]
+
 
 async function getActivePlans() {
   try {
@@ -189,19 +179,7 @@ export default async function HomePage() {
     <div className="relative overflow-hidden">
 
       {/* Live Crypto Ticker */}
-      <div className="border-b border-white/5 bg-black/30 overflow-hidden">
-        <div className="flex animate-ticker whitespace-nowrap py-2.5">
-          {[...tickerCoins, ...tickerCoins].map((coin, i) => (
-            <div key={i} className="inline-flex items-center gap-2 px-6 border-r border-white/5">
-              <span className="text-xs font-bold text-white/70">{coin.symbol}</span>
-              <span className="text-xs font-semibold text-white">{coin.price}</span>
-              <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${coin.up ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
-                {coin.change}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
+      <CryptoTicker />
 
       {/* HERO SECTION */}
       <section className="relative min-h-[92vh] flex items-center overflow-hidden">

@@ -1,85 +1,66 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
-import { verifyWebhookSignature } from '@/lib/westwallet'
+import { verifyIpnSignature, isPaymentConfirmed, isPaymentFailed } from '@/lib/nowpayments'
 import { sendDepositConfirmedEmail } from '@/lib/mail'
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.text()
-    const sig = req.headers.get('x-webhook-signature') || ''
 
-    if (!verifyWebhookSignature(body, sig)) {
+    // Verify NOWPayments IPN signature
+    const sig = req.headers.get('x-nowpayments-sig') || ''
+    if (!verifyIpnSignature(body, sig)) {
+      console.warn('[DEPOSIT_WEBHOOK] Invalid signature — rejected')
       return NextResponse.json({ error: 'Invalid signature.' }, { status: 401 })
     }
 
     const payload = JSON.parse(body)
-    const { address, amount, currency, txHash, confirmations, status } = payload
+    const {
+      payment_id,
+      payment_status,
+      order_id,        // This is our deposit.id
+      actually_paid,
+      pay_amount,
+      pay_currency,
+      price_amount,
+    } = payload
 
-    if (!address) return NextResponse.json({ error: 'Missing address.' }, { status: 400 })
+    if (!order_id && !payment_id) {
+      return NextResponse.json({ error: 'Missing identifiers.' }, { status: 400 })
+    }
 
+    // Look up by order_id (our deposit.id) or paymentId
     const deposit = await prisma.deposit.findFirst({
-      where: { address },
+      where: order_id ? { id: order_id } : { paymentId: payment_id },
       include: { user: true, currency: true },
     })
 
     if (!deposit) {
+      console.warn('[DEPOSIT_WEBHOOK] Deposit not found for order_id:', order_id)
       return NextResponse.json({ error: 'Deposit not found.' }, { status: 404 })
     }
 
-    const isConfirming = status === 'confirmed' && deposit.status !== 'CONFIRMED'
-    const incomingAmount = parseFloat(amount)
-
-    // Reject confirm webhooks with invalid/missing amount
-    if (isConfirming && (isNaN(incomingAmount) || incomingAmount <= 0)) {
-      console.error('[DEPOSIT_WEBHOOK] Invalid amount in confirm payload:', amount)
-      return NextResponse.json({ error: 'Invalid amount.' }, { status: 400 })
-    }
-
-    // Use incoming amount when present, fall back to stored amount only for non-confirm updates
-    const resolvedAmount = isNaN(incomingAmount) ? deposit.amount : incomingAmount
-
-    // Check minimum deposit requirement
-    if (isConfirming && resolvedAmount < deposit.currency.minDeposit) {
-      // Update deposit as FAILED — below minimum
-      await prisma.deposit.update({
-        where: { id: deposit.id },
-        data: {
-          txHash,
-          confirmations: confirmations || 0,
-          amount: resolvedAmount,
-          status: 'FAILED',
-        },
-      })
-      await prisma.notification.create({
-        data: {
-          userId: deposit.userId,
-          type: 'DEPOSIT',
-          title: 'Deposit Below Minimum',
-          message: `Your deposit of ${amount} ${currency} is below the minimum of ${deposit.currency.minDeposit} ${currency} and was not credited.`,
-        },
-      })
+    if (deposit.status === 'CONFIRMED' || deposit.status === 'FAILED') {
+      // Already in terminal state — acknowledge silently
       return NextResponse.json({ success: true })
     }
 
-    if (isConfirming) {
-      // Wrap deposit update + balance credit in one atomic transaction.
-      // Atomically claim the PENDING→CONFIRMED transition first to prevent
-      // double-credit if two webhook deliveries arrive simultaneously.
-      const usdAmount = resolvedAmount // In a real system: convert via exchange rate
+    if (isPaymentConfirmed(payment_status)) {
+      const usdAmount = deposit.amountUsd ?? price_amount ?? deposit.amount
+      const cryptoAmount = actually_paid || pay_amount || 0
 
       await prisma.$transaction(async (tx) => {
         const updated = await tx.deposit.updateMany({
-          where: { id: deposit.id, status: 'PENDING' },
+          where: { id: deposit.id, status: { notIn: ['CONFIRMED'] } },
           data: {
-            txHash,
-            confirmations: confirmations || 0,
-            amount: usdAmount,
             status: 'CONFIRMED',
+            amount: usdAmount,
+            payAmount: cryptoAmount,
+            payCurrency: pay_currency,
+            confirmations: 3,
             confirmedAt: new Date(),
           },
         })
-
-        // If count is 0, another request already confirmed this deposit — bail out
         if (updated.count === 0) return
 
         await tx.user.update({
@@ -93,7 +74,7 @@ export async function POST(req: NextRequest) {
             type: 'DEPOSIT',
             amount: usdAmount,
             status: 'COMPLETED',
-            description: `Deposit: ${amount} ${currency}`,
+            description: `Deposit: ${cryptoAmount} ${(pay_currency ?? '').toUpperCase()} (~$${usdAmount} USD)`,
             referenceId: deposit.id,
           },
         })
@@ -103,21 +84,27 @@ export async function POST(req: NextRequest) {
             userId: deposit.userId,
             type: 'DEPOSIT',
             title: 'Deposit Confirmed',
-            message: `Your deposit of ${amount} ${currency} has been confirmed.`,
+            message: `Your deposit of $${usdAmount} USD has been confirmed.`,
           },
         })
       })
 
-      // Send email (non-blocking)
-      sendDepositConfirmedEmail(deposit.user.email, incomingAmount, currency).catch(console.error)
+      sendDepositConfirmedEmail(
+        deposit.user.email,
+        deposit.amountUsd ?? price_amount ?? 0,
+        (pay_currency ?? '').toUpperCase()
+      ).catch(console.error)
+    } else if (isPaymentFailed(payment_status)) {
+      await prisma.deposit.update({
+        where: { id: deposit.id },
+        data: { status: 'FAILED' },
+      })
     } else {
-      // Update confirmations / amount only while still PENDING — never overwrite a CONFIRMED deposit
-      await prisma.deposit.updateMany({
-        where: { id: deposit.id, status: 'PENDING' },
+      // Just update confirmations / status for intermediate states
+      await prisma.deposit.update({
+        where: { id: deposit.id },
         data: {
-          txHash,
-          confirmations: confirmations || 0,
-          amount: resolvedAmount,
+          payAmount: actually_paid || pay_amount || deposit.payAmount,
         },
       })
     }

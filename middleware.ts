@@ -52,6 +52,7 @@ export default withAuth(
         if (
           publicRoutes.some((route) => pathname === route) ||
           pathname.startsWith('/api/auth') ||
+          pathname.startsWith('/api/crypto-prices') ||
           pathname.startsWith('/_next') ||
           pathname.startsWith('/favicon') ||
           pathname.startsWith('/uploads') ||
