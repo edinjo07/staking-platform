@@ -1,7 +1,7 @@
 'use client'
 
 import { useSearchParams, useRouter } from 'next/navigation'
-import { useEffect, useState, useTransition } from 'react'
+import { useEffect, useState, useTransition, Suspense } from 'react'
 import Link from 'next/link'
 
 const ICONS = {
@@ -32,7 +32,7 @@ const ERROR_MESSAGES: Record<string, string> = {
   server:   'Something went wrong on our end. Please try again later.',
 }
 
-export default function VerifyEmailPage() {
+function VerifyEmailContent() {
   const params  = useSearchParams()
   const router  = useRouter()
 
@@ -173,5 +173,21 @@ export default function VerifyEmailPage() {
         )}
       </div>
     </div>
+  )
+}
+
+export default function VerifyEmailPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-[#0d1117]">
+        <div className="w-16 h-16 text-yellow-400 animate-spin">
+          <svg fill="none" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" strokeWidth="2" stroke="currentColor" strokeDasharray="40 60" />
+          </svg>
+        </div>
+      </div>
+    }>
+      <VerifyEmailContent />
+    </Suspense>
   )
 }
