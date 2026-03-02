@@ -4,6 +4,7 @@ import { getAuthSession } from '@/lib/auth'
 import { PlansClient } from './PlansClient'
 import { TrendingUp, Users, Shield, Zap } from 'lucide-react'
 
+export const dynamic = 'force-dynamic'
 export const metadata: Metadata = { title: 'Staking Plans' }
 
 async function getPlans() {

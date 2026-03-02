@@ -1,4 +1,6 @@
-﻿import Link from 'next/link'
+﻿export const dynamic = 'force-dynamic'
+
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { PlanCard } from '@/components/shared/PlanCard'
 import CryptoTicker from '@/components/layout/CryptoTicker'
