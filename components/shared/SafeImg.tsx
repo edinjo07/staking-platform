@@ -1,6 +1,6 @@
 import React from 'react'
 
-interface SafeImgProps extends React.ImgHTMLAttributes<HTMLImageElement> {
+interface SafeImgProps extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, 'src'> {
   src: string | null | undefined
   alt: string
   /** Set to true only for server-generated data: URIs (e.g. QR codes) */
