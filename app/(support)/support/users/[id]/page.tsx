@@ -368,36 +368,3 @@ export default function SupportUserDetailPage() {
     </div>
   )
 }
-
-  return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold">User: {user.firstName} {user.lastName}</h1>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader><CardTitle className="text-base">Profile</CardTitle></CardHeader>
-          <CardContent className="space-y-2 text-sm">
-            <div className="flex justify-between"><span className="text-muted-foreground">Email</span><span>{user.email}</span></div>
-            <div className="flex justify-between"><span className="text-muted-foreground">Username</span><span>{user.username}</span></div>
-            <div className="flex justify-between"><span className="text-muted-foreground">Phone</span><span>{user.telegramChatId || '-'}</span></div>
-            <div className="flex justify-between"><span className="text-muted-foreground">Status</span><Badge variant={user.bannedAt ? 'destructive' : user.isActive ? 'success' : 'warning'} className="text-xs">{user.bannedAt ? 'Banned' : user.isActive ? 'Active' : 'Inactive'}</Badge></div>
-            <div className="flex justify-between"><span className="text-muted-foreground">Joined</span><span>{new Date(user.createdAt).toLocaleDateString()}</span></div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Card>
-        <CardHeader><CardTitle className="text-base">Support Tickets</CardTitle></CardHeader>
-        <CardContent className="p-0">
-          <table className="w-full text-sm">
-            <thead><tr className="border-b border-border text-muted-foreground"><th className="text-left px-4 py-2 font-medium">Subject</th><th className="text-left px-4 py-2 font-medium">Status</th><th className="text-left px-4 py-2 font-medium">Date</th></tr></thead>
-            <tbody className="divide-y divide-border">
-              {user.tickets.map((t) => (
-                <tr key={t.id}><td className="px-4 py-2">{t.subject}</td><td className="px-4 py-2"><Badge variant={t.status === 'OPEN' ? 'warning' : 'secondary'} className="text-xs">{t.status}</Badge></td><td className="px-4 py-2 text-muted-foreground">{new Date(t.createdAt).toLocaleDateString()}</td></tr>
-              ))}
-            </tbody>
-          </table>
-        </CardContent>
-      </Card>
-    </div>
-  )
-}
