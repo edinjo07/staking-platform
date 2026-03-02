@@ -4,16 +4,17 @@ import { requireWorker } from '@/lib/auth-helpers'
 
 export async function PATCH(
   _req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await requireWorker()
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
+    const { id } = await params
 
     const deposit = await prisma.deposit.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         user: { select: { id: true, balance: true, domainId: true } },
       },

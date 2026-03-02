@@ -6,11 +6,11 @@ import { sendDepositConfirmedEmail } from '@/lib/mail'
 
 export async function GET(
   _req: NextRequest,
-  { params }: { params: { depositId: string } }
+  { params }: { params: Promise<{ depositId: string }> }
 ) {
   try {
     const session = await requireAuth()
-    const { depositId } = params
+    const { depositId } = await params
 
     const deposit = await prisma.deposit.findFirst({
       where: { id: depositId, userId: session.user.id },

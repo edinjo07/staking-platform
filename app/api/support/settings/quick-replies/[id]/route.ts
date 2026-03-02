@@ -8,12 +8,13 @@ async function getCallerDomainId(callerId: string) {
 }
 
 // PATCH /api/support/settings/quick-replies/[id] — update title/content
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await requireSupport()
   const domainId = await getCallerDomainId(session.user.id)
   if (!domainId) return NextResponse.json({ error: 'No domain assigned.' }, { status: 403 })
+  const { id } = await params
 
-  const qr = await prisma.quickReply.findUnique({ where: { id: params.id } })
+  const qr = await prisma.quickReply.findUnique({ where: { id } })
   if (!qr) return NextResponse.json({ error: 'Not found.' }, { status: 404 })
   if (qr.domainId !== domainId) return NextResponse.json({ error: 'Forbidden.' }, { status: 403 })
 
@@ -23,7 +24,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   }
 
   const updated = await prisma.quickReply.update({
-    where: { id: params.id },
+    where: { id },
     data: { title: title.trim(), content: content.trim() },
   })
 
@@ -31,16 +32,17 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
 }
 
 // DELETE /api/support/settings/quick-replies/[id]
-export async function DELETE(_req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await requireSupport()
   const domainId = await getCallerDomainId(session.user.id)
   if (!domainId) return NextResponse.json({ error: 'No domain assigned.' }, { status: 403 })
+  const { id } = await params
 
-  const qr = await prisma.quickReply.findUnique({ where: { id: params.id } })
+  const qr = await prisma.quickReply.findUnique({ where: { id } })
   if (!qr) return NextResponse.json({ error: 'Not found.' }, { status: 404 })
   if (qr.domainId !== domainId) return NextResponse.json({ error: 'Forbidden.' }, { status: 403 })
 
-  await prisma.quickReply.delete({ where: { id: params.id } })
+  await prisma.quickReply.delete({ where: { id } })
 
   return NextResponse.json({ success: true })
 }
