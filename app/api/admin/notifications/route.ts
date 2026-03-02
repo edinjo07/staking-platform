@@ -18,7 +18,6 @@ export async function POST(req: NextRequest) {
     const users = await prisma.user.findMany({ where: { isActive: true }, select: { id: true } })
     await prisma.notification.createMany({
       data: users.map((u) => ({ userId: u.id, type: type || 'SYSTEM', title, message })),
-      skipDuplicates: true,
     })
     return NextResponse.json({ count: users.length })
   } catch {
