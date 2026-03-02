@@ -1,17 +1,17 @@
 import { NextResponse } from 'next/server'
 
-// Binance symbols → display symbol
-const PAIRS: { binance: string; symbol: string }[] = [
-  { binance: 'BTCUSDT',  symbol: 'BTC'   },
-  { binance: 'ETHUSDT',  symbol: 'ETH'   },
-  { binance: 'SOLUSDT',  symbol: 'SOL'   },
-  { binance: 'BNBUSDT',  symbol: 'BNB'   },
-  { binance: 'ADAUSDT',  symbol: 'ADA'   },
-  { binance: 'DOTUSDT',  symbol: 'DOT'   },
-  { binance: 'AVAXUSDT', symbol: 'AVAX'  },
-  { binance: 'MATICUSDT',symbol: 'MATIC' },
-  { binance: 'LINKUSDT', symbol: 'LINK'  },
-  { binance: 'TRXUSDT',  symbol: 'TRX'   },
+// CoinGecko id → display symbol
+const COINS: { id: string; symbol: string }[] = [
+  { id: 'bitcoin',       symbol: 'BTC'   },
+  { id: 'ethereum',      symbol: 'ETH'   },
+  { id: 'solana',        symbol: 'SOL'   },
+  { id: 'binancecoin',   symbol: 'BNB'   },
+  { id: 'cardano',       symbol: 'ADA'   },
+  { id: 'polkadot',      symbol: 'DOT'   },
+  { id: 'avalanche-2',   symbol: 'AVAX'  },
+  { id: 'matic-network', symbol: 'MATIC' },
+  { id: 'chainlink',     symbol: 'LINK'  },
+  { id: 'tron',          symbol: 'TRX'   },
 ]
 
 function formatPrice(price: number): string {
@@ -20,24 +20,26 @@ function formatPrice(price: number): string {
   return `$${price.toLocaleString('en-US', { minimumFractionDigits: 3, maximumFractionDigits: 4 })}`
 }
 
+type CoinGeckoResponse = Record<string, { usd: number; usd_24h_change: number }>
+
 export async function GET() {
   try {
-    const symbolsParam = encodeURIComponent(JSON.stringify(PAIRS.map((p) => p.binance)))
-    const url = `https://api.binance.com/api/v3/ticker/24hr?symbols=${symbolsParam}`
+    const ids = COINS.map((c) => c.id).join(',')
+    const url = `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd&include_24hr_change=true`
 
     const res = await fetch(url, {
       headers: { Accept: 'application/json' },
-      next: { revalidate: 30 },
+      next: { revalidate: 60 },
     })
 
-    if (!res.ok) throw new Error(`Binance responded with ${res.status}`)
+    if (!res.ok) throw new Error(`CoinGecko responded with ${res.status}`)
 
-    const data: { symbol: string; lastPrice: string; priceChangePercent: string }[] = await res.json()
+    const data: CoinGeckoResponse = await res.json()
 
-    const coins = PAIRS.map(({ binance, symbol }) => {
-      const row = data.find((d) => d.symbol === binance)
-      const price = parseFloat(row?.lastPrice ?? '0')
-      const change = parseFloat(row?.priceChangePercent ?? '0')
+    const coins = COINS.map(({ id, symbol }) => {
+      const row = data[id]
+      const price = row?.usd ?? 0
+      const change = row?.usd_24h_change ?? 0
       return {
         symbol,
         price: formatPrice(price),
@@ -47,12 +49,12 @@ export async function GET() {
     })
 
     return NextResponse.json(coins, {
-      headers: { 'Cache-Control': 's-maxage=30, stale-while-revalidate=15' },
+      headers: { 'Cache-Control': 's-maxage=60, stale-while-revalidate=30' },
     })
   } catch (err) {
     console.error('[crypto-prices] fetch error:', err)
     return NextResponse.json(
-      PAIRS.map(({ symbol }) => ({ symbol, price: '$—', change: '—', up: true })),
+      COINS.map(({ symbol }) => ({ symbol, price: '$—', change: '—', up: true })),
       { status: 200 }
     )
   }
