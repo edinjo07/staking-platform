@@ -38,6 +38,7 @@ export default withAuth(
         const publicRoutes = [
           '/',
           '/about',
+          '/what-is-staking',
           '/policy',
           '/app-info',
           '/terms',
