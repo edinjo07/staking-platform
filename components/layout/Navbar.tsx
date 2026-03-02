@@ -23,6 +23,7 @@ import { cn } from '@/lib/utils'
 const navLinks = [
   { href: '/', label: 'Home' },
   { href: '/plans', label: 'Staking Plans' },
+  { href: '/what-is-staking', label: 'What is Staking?' },
   { href: '/about', label: 'About' },
   { href: '/faq', label: 'FAQs' },
   { href: '/contact', label: 'Contact' },
