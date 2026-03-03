@@ -14,6 +14,7 @@ import {
   Settings,
   Bell,
   ChevronDown,
+  Rocket,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Logo } from '@/components/shared/Logo'
