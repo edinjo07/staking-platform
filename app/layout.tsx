@@ -8,21 +8,21 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: {
-    default: 'StakePlatform - Earn Passive Income',
-    template: '%s | StakePlatform',
+    default: 'StakeOnix - Earn Passive Income',
+    template: '%s | StakeOnix',
   },
   description:
     'A professional staking platform to grow your crypto assets with high daily returns.',
   keywords: ['staking', 'crypto', 'bitcoin', 'ethereum', 'passive income', 'DeFi'],
-  authors: [{ name: 'StakePlatform' }],
-  creator: 'StakePlatform',
+  authors: [{ name: 'StakeOnix' }],
+  creator: 'StakeOnix',
   openGraph: {
     type: 'website',
     locale: 'en_US',
     url: process.env.NEXT_PUBLIC_APP_URL,
-    title: 'StakePlatform - Earn Passive Income',
+    title: 'StakeOnix - Earn Passive Income',
     description: 'A professional staking platform to grow your crypto assets.',
-    siteName: 'StakePlatform',
+    siteName: 'StakeOnix',
   },
   robots: {
     index: true,

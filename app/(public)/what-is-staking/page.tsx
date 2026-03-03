@@ -17,7 +17,7 @@ import {
 import { Button } from '@/components/ui/button'
 
 export const metadata: Metadata = {
-  title: 'What is Staking? | StakePlatform',
+  title: 'What is Staking? | StakeOnix',
   description:
     'Learn what crypto staking is, how it works, and how you can earn passive income — explained in simple, everyday language.',
 }

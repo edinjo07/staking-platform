@@ -13,15 +13,15 @@ export default function TermsPage() {
           {[
             {
               title: '1. Acceptance of Terms',
-              content: `By accessing and using StakePlatform, you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service.`,
+              content: `By accessing and using StakeOnix, you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service.`,
             },
             {
               title: '2. Use of Service',
-              content: `StakePlatform provides a cryptocurrency staking platform. You must be at least 18 years of age to use our services. You are responsible for maintaining the confidentiality of your account and password.`,
+              content: `StakeOnix provides a cryptocurrency staking platform. You must be at least 18 years of age to use our services. You are responsible for maintaining the confidentiality of your account and password.`,
             },
             {
               title: '3. Investment Risk',
-              content: `Cryptocurrency staking involves significant risk. The value of digital assets can fluctuate wildly, and you may lose some or all of your investment. Past performance is not indicative of future results. StakePlatform does not guarantee any specific returns.`,
+              content: `Cryptocurrency staking involves significant risk. The value of digital assets can fluctuate wildly, and you may lose some or all of your investment. Past performance is not indicative of future results. StakeOnix does not guarantee any specific returns.`,
             },
             {
               title: '4. Prohibited Activities',
@@ -42,7 +42,7 @@ export default function TermsPage() {
             },
             {
               title: '7. Limitation of Liability',
-              content: `StakePlatform shall not be liable for any indirect, incidental, special, consequential or punitive damages resulting from your use of the service.`,
+              content: `StakeOnix shall not be liable for any indirect, incidental, special, consequential or punitive damages resulting from your use of the service.`,
             },
             {
               title: '8. Changes to Terms',
@@ -50,7 +50,7 @@ export default function TermsPage() {
             },
             {
               title: '9. Contact',
-              content: `Questions about the Terms of Service should be sent to: legal@stakeplatform.com`,
+              content: `Questions about the Terms of Service should be sent to: legal@stakeonix.com`,
             },
           ].map((section) => (
             <div key={section.title}>

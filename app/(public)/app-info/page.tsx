@@ -22,10 +22,10 @@ export default function AppInfoPage() {
           <div className="inline-flex h-20 w-20 items-center justify-center rounded-3xl bg-primary/10 mb-6">
             <Smartphone className="h-10 w-10 text-primary" />
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">StakePlatform Mobile App</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">StakeOnix Mobile App</h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
             Manage your staking portfolio anywhere, anytime. Our mobile app brings the full
-            power of StakePlatform to your pocket.
+            power of StakeOnix to your pocket.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Button variant="gradient" size="lg" className="gap-2">

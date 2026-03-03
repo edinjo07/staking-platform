@@ -14,11 +14,9 @@ import {
   Settings,
   Bell,
   ChevronDown,
-  LayoutGrid,
-  Rocket,
-  TrendingUp,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { Logo } from '@/components/shared/Logo'
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -60,12 +58,7 @@ export function Navbar() {
 
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2.5 font-bold text-xl group">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 shadow-lg shadow-cyan-500/40 group-hover:shadow-cyan-500/60 transition-all duration-300 group-hover:scale-105">
-            <LayoutGrid className="h-5 w-5 text-white" />
-          </div>
-          <span className="gradient-text font-extrabold tracking-tight">StakePlatform</span>
-        </Link>
+        <Logo />
 
         {/* Desktop Nav */}
         <div className="hidden md:flex items-center gap-1">

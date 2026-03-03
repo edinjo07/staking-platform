@@ -239,10 +239,16 @@ export default function SignupPage() {
 
         <div className="relative z-10">
           <Link href="/" className="inline-flex items-center gap-2.5 font-bold text-xl">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary">
-              <TrendingUp className="h-5 w-5 text-white" />
-            </div>
-            <span className="gradient-text text-2xl font-bold">StakePlatform</span>
+            <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-9 w-9 drop-shadow-[0_2px_8px_rgba(79,70,229,0.5)]">
+              <defs><linearGradient id="slg3" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#2563EB"/><stop offset="100%" stopColor="#7C3AED"/></linearGradient></defs>
+              <polygon points="20,2 35,11 35,29 20,38 5,29 5,11" fill="url(#slg3)"/>
+              <rect x="12" y="10" width="13" height="5" rx="1.5" fill="white"/>
+              <rect x="12" y="10" width="5" height="10" rx="1.5" fill="white"/>
+              <rect x="12" y="17.5" width="16" height="5" rx="1.5" fill="white"/>
+              <rect x="23" y="20" width="5" height="10" rx="1.5" fill="white"/>
+              <rect x="15" y="25" width="13" height="5" rx="1.5" fill="white"/>
+            </svg>
+            <span className="text-muted-foreground font-bold">Stake</span><span className="bg-gradient-to-r from-blue-500 via-indigo-500 to-violet-500 bg-clip-text text-transparent font-extrabold">onix</span>
           </Link>
         </div>
 
@@ -288,10 +294,16 @@ export default function SignupPage() {
         {/* Mobile logo */}
         <div className="flex items-center justify-between p-6 lg:hidden border-b border-border">
           <Link href="/" className="inline-flex items-center gap-2 font-bold">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary">
-              <TrendingUp className="h-4 w-4 text-white" />
-            </div>
-            <span className="gradient-text text-lg font-bold">StakePlatform</span>
+            <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 drop-shadow-[0_2px_8px_rgba(79,70,229,0.5)]">
+              <defs><linearGradient id="slg4" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#2563EB"/><stop offset="100%" stopColor="#7C3AED"/></linearGradient></defs>
+              <polygon points="20,2 35,11 35,29 20,38 5,29 5,11" fill="url(#slg4)"/>
+              <rect x="12" y="10" width="13" height="5" rx="1.5" fill="white"/>
+              <rect x="12" y="10" width="5" height="10" rx="1.5" fill="white"/>
+              <rect x="12" y="17.5" width="16" height="5" rx="1.5" fill="white"/>
+              <rect x="23" y="20" width="5" height="10" rx="1.5" fill="white"/>
+              <rect x="15" y="25" width="13" height="5" rx="1.5" fill="white"/>
+            </svg>
+            <span className="text-muted-foreground font-bold">Stake</span><span className="bg-gradient-to-r from-blue-500 via-indigo-500 to-violet-500 bg-clip-text text-transparent font-extrabold">onix</span>
           </Link>
           <Link
             href="/login"

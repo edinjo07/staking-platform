@@ -60,7 +60,7 @@ export default function PolicyPage() {
             },
             {
               title: '7. Contact Us',
-              content: `If you have any questions about this Privacy Policy, please contact us at: privacy@stakeplatform.com`,
+              content: `If you have any questions about this Privacy Policy, please contact us at: privacy@stakeonix.com`,
             },
           ].map((section) => (
             <div key={section.title}>

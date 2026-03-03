@@ -9,8 +9,8 @@ const faqs = [
     category: 'Getting Started',
     items: [
       {
-        q: 'What is StakePlatform?',
-        a: 'StakePlatform is a cryptocurrency staking platform that allows you to earn passive income by staking your digital assets. We pool staking resources and distribute rewards to our users daily.',
+        q: 'What is StakeOnix?',
+        a: 'StakeOnix is a cryptocurrency staking platform that allows you to earn passive income by staking your digital assets. We pool staking resources and distribute rewards to our users daily.',
       },
       {
         q: 'How do I start staking?',
@@ -60,7 +60,7 @@ const faqs = [
     category: 'Security',
     items: [
       {
-        q: 'How secure is StakePlatform?',
+        q: 'How secure is StakeOnix?',
         a: 'We employ industry-leading security measures including SSL encryption, two-factor authentication (2FA), withdrawal PIN codes, and cold storage for the majority of user funds.',
       },
       {
@@ -111,7 +111,7 @@ export default function FAQPage() {
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold mb-4">Frequently Asked Questions</h1>
           <p className="text-muted-foreground">
-            Find answers to the most common questions about StakePlatform.
+            Find answers to the most common questions about StakeOnix.
           </p>
         </div>
 

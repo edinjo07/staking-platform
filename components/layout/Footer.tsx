@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import { LayoutGrid, Twitter, Github, Mail, Shield, TrendingUp, Globe, Zap } from 'lucide-react'
+import { Twitter, Github, Mail, Shield, TrendingUp, Globe, Zap } from 'lucide-react'
+import { Logo } from '@/components/shared/Logo'
 
 const footerLinks = {
   Platform: [
@@ -60,12 +61,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
           {/* Brand */}
           <div className="md:col-span-2">
-            <Link href="/" className="flex items-center gap-2.5 font-bold text-xl mb-4 group w-fit">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 shadow-lg shadow-cyan-500/30 group-hover:shadow-cyan-500/50 transition-all">
-                <LayoutGrid className="h-5 w-5 text-white" />
-              </div>
-              <span className="gradient-text font-extrabold tracking-tight">StakePlatform</span>
-            </Link>
+            <Logo linkClassName="mb-4" />
             <p className="text-sm text-muted-foreground max-w-xs leading-relaxed mb-5">
               The most trusted crypto staking platform. Grow your digital assets with
               institutional-grade security and competitive daily returns.
@@ -86,7 +82,7 @@ export function Footer() {
                 <Github className="h-4 w-4" />
               </a>
               <a
-                href="mailto:support@stakeplatform.com"
+                href="mailto:support@stakeonix.com"
                 aria-label="Email"
                 className="p-2.5 rounded-xl text-muted-foreground hover:text-foreground bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/15 transition-all"
               >
@@ -118,7 +114,7 @@ export function Footer() {
         {/* Bottom bar */}
         <div className="mt-12 border-t border-white/5 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <span>© {new Date().getFullYear()} StakePlatform.</span>
+            <span>© {new Date().getFullYear()} StakeOnix.</span>
             <span className="text-white/20">|</span>
             <span>All rights reserved.</span>
           </div>

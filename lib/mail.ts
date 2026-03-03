@@ -19,7 +19,7 @@ interface EmailOptions {
 
 export async function sendEmail({ to, subject, html, text }: EmailOptions): Promise<void> {
   await transporter.sendMail({
-    from: process.env.SMTP_FROM || 'StakePlatform <noreply@stakeplatform.com>',
+    from: process.env.SMTP_FROM || 'StakeOnix <noreply@stakeonix.com>',
     to,
     subject,
     html,
@@ -31,10 +31,10 @@ export function getWelcomeEmailTemplate(name: string, email: string): string {
   return `
     <!DOCTYPE html>
     <html>
-    <head><meta charset="utf-8"><title>Welcome to StakePlatform</title></head>
+    <head><meta charset="utf-8"><title>Welcome to StakeOnix</title></head>
     <body style="font-family: Arial, sans-serif; background: #0f172a; color: #e2e8f0; padding: 20px;">
       <div style="max-width: 600px; margin: 0 auto; background: #1e293b; border-radius: 12px; padding: 40px;">
-        <h1 style="color: #22c55e; text-align: center;">Welcome to StakePlatform!</h1>
+        <h1 style="color: #22c55e; text-align: center;">Welcome to StakeOnix!</h1>
         <p>Hello ${name},</p>
         <p>Your account has been successfully created with email: <strong>${email}</strong></p>
         <p>Start staking today and earn passive income!</p>
@@ -104,7 +104,7 @@ export function getDepositConfirmedEmailTemplate(name: string, amount: string, c
 export async function sendWelcomeEmail(email: string, name: string): Promise<void> {
   await sendEmail({
     to: email,
-    subject: 'Welcome to StakePlatform!',
+    subject: 'Welcome to StakeOnix!',
     html: getWelcomeEmailTemplate(name, email),
   })
 }

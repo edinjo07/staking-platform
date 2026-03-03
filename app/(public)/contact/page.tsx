@@ -12,7 +12,7 @@ const contactInfo = [
   {
     icon: <Mail className="h-5 w-5" />,
     label: 'Email',
-    value: 'support@stakeplatform.com',
+    value: 'support@stakeonix.com',
   },
   {
     icon: <MessageSquare className="h-5 w-5" />,

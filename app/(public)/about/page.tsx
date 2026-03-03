@@ -39,7 +39,7 @@ export default function AboutPage() {
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">About StakePlatform</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">About StakeOnix</h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             We are a team of passionate crypto experts dedicated to making staking accessible,
             profitable, and secure for everyone.
@@ -50,7 +50,7 @@ export default function AboutPage() {
         <div className="glass-card p-8 md:p-12 mb-16 max-w-4xl mx-auto">
           <h2 className="text-2xl font-bold mb-4 gradient-text">Our Mission</h2>
           <p className="text-muted-foreground text-lg leading-relaxed">
-            Founded in 2020, StakePlatform was created with a single mission: to democratize
+            Founded in 2020, StakeOnix was created with a single mission: to democratize
             access to DeFi staking rewards. We believe that everyone should have the opportunity
             to grow their wealth through crypto staking, regardless of their technical background
             or the size of their portfolio.

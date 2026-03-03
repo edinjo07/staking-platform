@@ -83,10 +83,34 @@ export function Sidebar({ collapsed = false, onClose }: SidebarProps) {
     >
       {/* Logo */}
       <div className="flex h-16 items-center gap-3 px-4 border-b border-border flex-shrink-0">
-        <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-primary">
-          <TrendingUp className="h-5 w-5 text-white" />
-        </div>
-        {!collapsed && <span className="font-bold gradient-text flex-1">StakePlatform</span>}
+        {collapsed ? (
+          <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center">
+            <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-8 w-8">
+              <defs><linearGradient id="slg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#2563EB"/><stop offset="100%" stopColor="#7C3AED"/></linearGradient></defs>
+              <polygon points="20,2 35,11 35,29 20,38 5,29 5,11" fill="url(#slg)"/>
+              <rect x="12" y="10" width="13" height="5" rx="1.5" fill="white"/>
+              <rect x="12" y="10" width="5" height="10" rx="1.5" fill="white"/>
+              <rect x="12" y="17.5" width="16" height="5" rx="1.5" fill="white"/>
+              <rect x="23" y="20" width="5" height="10" rx="1.5" fill="white"/>
+              <rect x="15" y="25" width="13" height="5" rx="1.5" fill="white"/>
+            </svg>
+          </div>
+        ) : (
+          <div className="flex items-center gap-2.5 flex-1">
+            <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 flex-shrink-0">
+              <defs><linearGradient id="slg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#2563EB"/><stop offset="100%" stopColor="#7C3AED"/></linearGradient></defs>
+              <polygon points="20,2 35,11 35,29 20,38 5,29 5,11" fill="url(#slg2)"/>
+              <rect x="12" y="10" width="13" height="5" rx="1.5" fill="white"/>
+              <rect x="12" y="10" width="5" height="10" rx="1.5" fill="white"/>
+              <rect x="12" y="17.5" width="16" height="5" rx="1.5" fill="white"/>
+              <rect x="23" y="20" width="5" height="10" rx="1.5" fill="white"/>
+              <rect x="15" y="25" width="13" height="5" rx="1.5" fill="white"/>
+            </svg>
+            <span className="font-extrabold tracking-tight text-base leading-none">
+              <span className="text-muted-foreground">Stake</span><span className="bg-gradient-to-r from-blue-500 via-indigo-500 to-violet-500 bg-clip-text text-transparent">onix</span>
+            </span>
+          </div>
+        )}
         {/* Mobile close button */}
         {!collapsed && onClose && (
           <button

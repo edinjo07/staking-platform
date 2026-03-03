@@ -83,7 +83,7 @@ export async function createPayment(
     price_currency: 'usd',
     pay_currency: payCrypto.toLowerCase(),
     order_id: orderId,
-    order_description: 'StakePlatform deposit',
+    order_description: 'StakeOnix deposit',
   }
   if (ipnUrl) body.ipn_callback_url = ipnUrl
 
