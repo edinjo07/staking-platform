@@ -1,0 +1,32 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#18CFFF"/>
+      <stop offset="50%"  stop-color="#5045FF"/>
+      <stop offset="100%" stop-color="#9B1FE8"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Dark hexagon background -->
+  <polygon points="50,2 95,26 95,74 50,98 5,74 5,26" fill="#0C0F1E"/>
+
+  <!--
+    Geometric S made of two interlocked thick brackets.
+    Top bracket: top bar + right side descending to middle.
+    Bottom bracket: bottom bar + left side ascending to middle.
+    A dark channel separates inner and outer strokes for depth.
+  -->
+
+  <!-- Top bracket (outer) -->
+  <polygon points="18,20 82,20 82,56 68,56 68,34 18,34" fill="url(#g)"/>
+  <!-- Top bracket inner cutout -->
+  <polygon points="18,20 54,20 54,34 18,34" fill="#0C0F1E"/>
+
+  <!-- Bottom bracket (outer) -->
+  <polygon points="18,44 82,44 82,80 18,80 18,66 32,66 32,58 82,58 82,44" fill="url(#g)"/>
+  <!-- Bottom bracket inner cutout -->
+  <polygon points="46,66 82,66 82,80 46,80" fill="#0C0F1E"/>
+
+  <!-- Thin gap between the two brackets for depth -->
+  <rect x="18" y="55" width="64" height="2" fill="#0C0F1E"/>
+</svg>
